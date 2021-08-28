@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+    mysql:
+        container_name: mysql
+        build:
+            context: .
+            dockerfile: ./docker/mysql/Dockerfile
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_USER: docker
+            MYSQL_PASSWORD: docker
+            MYSQL_DATABASE: sandbox
+            TZ: 'Asia/Tokyo'
+        volumes:
+            - ./docker/mysql/init:/docker-entrypoint-initdb.d
+            - ./docker/mysql/conf/my.cnf:/etc/mysql/conf.d/my.cnf
+            - ./data/lib/mysql:/var/lib/mysql
+
+    golang:
+        container_name: golang
+        build:
+            context: .
+            dockerfile: ./docker/golang/Dockerfile
+        ports:
+            - "8080:8080"
+        tty: true
+        volumes:
+            - ./src:/go/app
